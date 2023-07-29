@@ -54,14 +54,9 @@ const menuAside: MenuAsideItem[] = [
     label: 'Order',
     menu: [
       {
-        label: 'Create',
-        icon: mdiFolderPlus,
-        href: '/location/create',
-      },
-      {
         label: 'List',
         icon: mdiFormatListBulletedSquare,
-        href: '/location/list',
+        href: '/order/list',
       },
     ],
   },
