@@ -13,6 +13,8 @@ import { useAppDispatch, useAppSelector } from '../services/hooks'
 import FormField from '../components/FormField'
 import { Field, Form, Formik } from 'formik'
 import { useRouter } from 'next/router'
+import { getCookies } from '../utils/cookie'
+import { STORAGE_KEY } from '../utils/constant'
 
 type Props = {
   children: ReactNode
@@ -24,8 +26,8 @@ export default function LayoutAuthenticated({ children }: Props) {
   useEffect(() => {
     dispatch(
       setUser({
-        name: 'John Doe',
-        email: 'john@example.com',
+        name: getCookies(STORAGE_KEY.name),
+        email: getCookies(STORAGE_KEY.email),
         avatar:
           'https://avatars.dicebear.com/api/avataaars/example.svg?options[top][]=shortHair&options[accessoriesChance]=93',
       })

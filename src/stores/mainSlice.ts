@@ -20,7 +20,7 @@ const initialState: MainState = {
   /* Field focus with ctrl+k (to register only once) */
   isFieldFocusRegistered: false,
   // isLogin: Boolean(getCookies(STORAGE_KEY.token)),
-  isLogin: true,
+  isLogin: Boolean(getCookies(STORAGE_KEY.token)),
 }
 
 export const mainSlice = createSlice({
@@ -33,7 +33,6 @@ export const mainSlice = createSlice({
       state.userAvatar = action.payload.avatar
     },
     setIsLogin: (state, action: PayloadAction<LoginPayload>) => {
-      console.log('action.payload.isLogin', action.payload.isLogin)
       state.isLogin = action.payload.isLogin
     },
   },

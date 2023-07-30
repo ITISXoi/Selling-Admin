@@ -1,46 +1,44 @@
-import React from 'react'
+/* eslint-disable @next/next/no-img-element */
+import { Button } from '@mui/material'
+import { signInWithPopup } from 'firebase/auth'
 import Head from 'next/head'
-
-import SectionFullScreen from '../components/SectionFullScreen'
-
-import { getPageTitle } from '../config'
-import { GoogleLogin } from '@react-oauth/google'
-import { toast } from 'react-toastify'
 import { useRouter } from 'next/router'
-import { useUserAuth } from '../hooks/useAuthUser'
+import { toast } from 'react-toastify'
+import { auth, provider } from '../../firebase'
+import SectionFullScreen from '../components/SectionFullScreen'
+import { getPageTitle } from '../config'
+import { useAppDispatch } from '../services/hooks'
+import { setIsLogin } from '../stores/mainSlice'
+import { STORAGE_KEY } from '../utils/constant'
+import { setCookies } from '../utils/cookie'
 
 export default function Login() {
   const router = useRouter()
-  const { loginFunc } = useUserAuth()
+  const dispatch = useAppDispatch()
+  const handleClick = () => {
+    signInWithPopup(auth, provider)
+      .then((data: any) => {
+        toast.success('Login Success!')
+        dispatch(setIsLogin({ isLogin: true }))
+        router.push('/')
+        setCookies(STORAGE_KEY.token, data.user.accessToken)
+        setCookies(STORAGE_KEY.email, data.user.email)
+        setCookies(STORAGE_KEY.name, data.user.displayName)
+      })
+      .catch(() => {
+        toast.error('Login fail!')
+      })
+  }
 
   return (
     <>
       <Head>
         <title>{getPageTitle('Login')}</title>
       </Head>
-
       <SectionFullScreen bg="purplePink">
-        <GoogleLogin
-          onSuccess={(credentialResponse) => {
-            const paramsLogin = {
-              tokenId: String(credentialResponse.credential),
-            }
-            router.push('/')
-
-            loginFunc(paramsLogin)
-          }}
-          onError={() => {
-            toast.error('Login Failed !', {
-              position: toast.POSITION.TOP_RIGHT,
-            })
-          }}
-          theme="filled_blue"
-          ux_mode="popup"
-          type="standard"
-          size="large"
-          text="signin_with"
-          logo_alignment="left"
-        />
+        <Button variant="contained" onClick={handleClick}>
+          Signin With Google
+        </Button>
       </SectionFullScreen>
     </>
   )

@@ -1,6 +1,7 @@
 export const STORAGE_KEY = {
   token: 'token',
   email: 'email',
+  name: 'name'
 }
 
 export const KEY_ITEM = {
