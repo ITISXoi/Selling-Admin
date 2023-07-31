@@ -35,7 +35,7 @@ const List = () => {
   useEffect(() => {
     const starCountRef = ref(db, 'product')
     onValue(starCountRef, (snapshot) => {
-      setData(Object.values(snapshot.val()))
+      setData(Object.values(snapshot.val() || {}))
     })
   }, [refetchData])
   console.log('data', data)

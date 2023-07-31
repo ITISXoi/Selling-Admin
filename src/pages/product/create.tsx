@@ -1,5 +1,5 @@
 import { mdiBallotOutline } from '@mdi/js'
-import { push, ref, set } from 'firebase/database'
+import { onValue, push, ref, set } from 'firebase/database'
 import { Field, Form, Formik } from 'formik'
 import Head from 'next/head'
 import router from 'next/router'
@@ -15,6 +15,17 @@ import SectionTitleLineWithButton from '../../components/SectionTitleLineWithBut
 import { getPageTitle } from '../../config'
 import LayoutAuthenticated from '../../layouts/Authenticated'
 import moment from 'moment'
+import { useEffect, useMemo, useState } from 'react'
+
+type ISelectBoxProps = {
+  name: string
+  value: string
+}
+
+type IMetadata = {
+  id: string
+  name: string
+}
 
 const CreateKeyworkSchema = Yup.object().shape({
   name: Yup.string().required('Required'),
@@ -25,14 +36,27 @@ const CreateKeyworkSchema = Yup.object().shape({
   url: Yup.string().required('Required'),
 })
 
-const listCategory = [
-  { id: 0, name: 'Please select', value: '' },
-  { id: 1, name: 'Coffee', value: 'Coffee' },
-  { id: 2, name: 'Cake', value: 'Cake' },
-]
+export const handleListDataSelectBox = (listData: IMetadata[]) => {
+  const data: ISelectBoxProps[] = []
+  data.push({ value: '', name: 'Please select' })
+  for (let i = 0; i < listData?.length; i++) {
+    data.push({ value: listData[i].name, name: listData[i].name })
+  }
+  return data
+}
 
 const CreateFieldContainer = () => {
-  console.log('date', moment(new Date()).format('DD MMM YYYY'))
+  const [category, setCategory] = useState([])
+  useEffect(() => {
+    const starCountRef = ref(db, 'category')
+    onValue(starCountRef, (snapshot) => {
+      setCategory(Object.values(snapshot.val()))
+    })
+  }, [])
+  const listCategory = useMemo(
+    () => handleListDataSelectBox(Array.isArray(category) ? category : []),
+    [category]
+  )
   return (
     <LayoutAuthenticated>
       <Head>
@@ -87,7 +111,7 @@ const CreateFieldContainer = () => {
                   <FormField label="Category">
                     <Field as="select" name="category">
                       {listCategory.map((item) => (
-                        <option value={item.value} key={item.id}>
+                        <option value={item.value} key={item.value}>
                           {item.name}
                         </option>
                       ))}

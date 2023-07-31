@@ -1,6 +1,5 @@
 import {
   mdiBadgeAccountAlertOutline,
-  mdiFileWordBox,
   mdiFolderPlus,
   mdiFormatListBulletedSquare,
   mdiMapMarker,
@@ -57,22 +56,6 @@ const menuAside: MenuAsideItem[] = [
         label: 'List',
         icon: mdiFormatListBulletedSquare,
         href: '/order/list',
-      },
-    ],
-  },
-  {
-    icon: mdiFileWordBox,
-    label: 'Create Account',
-    menu: [
-      {
-        label: 'Warehouse',
-        icon: mdiFolderPlus,
-        href: '/create-account/user',
-      },
-      {
-        label: 'Admin',
-        icon: mdiFolderPlus,
-        href: '/create-account/admin',
       },
     ],
   },
