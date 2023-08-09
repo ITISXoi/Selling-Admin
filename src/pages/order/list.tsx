@@ -1,12 +1,11 @@
 /* eslint-disable @next/next/no-img-element */
 /* eslint-disable react-hooks/exhaustive-deps */
-import { mdiAccountEditOutline, mdiDelete } from '@mdi/js'
-import { onValue, ref, remove } from 'firebase/database'
+import { mdiAccountEditOutline } from '@mdi/js'
+import { onValue, ref } from 'firebase/database'
 import moment from 'moment'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
-import { toast } from 'react-toastify'
 import { db } from '../../../firebase'
 import BaseIcon from '../../components/BaseIcon'
 import CardBox from '../../components/CardBox'
@@ -17,27 +16,15 @@ import LayoutAuthenticated from '../../layouts/Authenticated'
 const List = () => {
   const router = useRouter()
   const handleEdit = (id: string) => {
-    router.push(`/product/update/${id}`)
+    router.push(`/order/detail/${id}`)
   }
   const [data, setData] = useState([])
-  const [refetchData, setRefetchData] = useState(0)
-  const handleDelete = (id: string) => {
-    const productRef = ref(db, 'product/' + id)
-    remove(productRef)
-      .then(() => {
-        setRefetchData((state) => state + 1)
-        toast.success('Product has been successfully removed.')
-      })
-      .catch((error) => {
-        toast.error('Error while removing product:', error)
-      })
-  }
   useEffect(() => {
-    const starCountRef = ref(db, 'product')
+    const starCountRef = ref(db, 'user')
     onValue(starCountRef, (snapshot) => {
       setData(Object.values(snapshot.val()))
     })
-  }, [refetchData])
+  }, [])
   console.log('data', data)
   return (
     <LayoutAuthenticated>
@@ -63,37 +50,19 @@ const List = () => {
                           scope="col"
                           className="text-sm font-medium text-gray-900 px-6 py-4 text-left"
                         >
-                          Name
+                          Email
                         </th>
                         <th
                           scope="col"
                           className="text-sm font-medium text-gray-900 px-6 py-4 text-left"
                         >
-                          Category
+                          Address
                         </th>
                         <th
                           scope="col"
                           className="text-sm font-medium text-gray-900 px-6 py-4 text-left"
                         >
-                          Amount
-                        </th>
-                        <th
-                          scope="col"
-                          className="text-sm font-medium text-gray-900 px-6 py-4 text-left"
-                        >
-                          Price
-                        </th>
-                        <th
-                          scope="col"
-                          className="text-sm font-medium text-gray-900 px-6 py-4 text-left"
-                        >
-                          Rating
-                        </th>
-                        <th
-                          scope="col"
-                          className="text-sm font-medium text-gray-900 px-6 py-4 text-left"
-                        >
-                          Image
+                          Total Price
                         </th>
                         <th
                           scope="col"
@@ -105,7 +74,7 @@ const List = () => {
                           scope="col"
                           className="text-sm font-medium text-gray-900 px-6 py-4 text-left"
                         >
-                          Updated At
+                          Status
                         </th>
                         <th
                           scope="col"
@@ -116,35 +85,26 @@ const List = () => {
                       </tr>
                     </thead>
                     <tbody>
-                      {data.map((item, index) => {
+                      {data.map((item) => {
                         return (
                           <tr key={item.id} className="bg-gray-100 border-b">
                             <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                              {index + 1}
+                              {item.id}
                             </td>
                             <td className="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">
-                              {item.name}
+                              {item.email}
                             </td>
                             <td className="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">
-                              {item.category}
+                              {item.address} - {item.state} - {item.city}
                             </td>
                             <td className="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">
-                              {item.amount}
+                              {item.totalPrice}
                             </td>
                             <td className="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">
-                              {item.price}
+                              {moment(item.updatedAt).format('DD-MM-YY')}
                             </td>
                             <td className="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">
-                              {item.rating}
-                            </td>
-                            <td className="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">
-                              <img alt="" src={item.url} width={'50px'} />
-                            </td>
-                            <td className="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">
-                              {moment(item.createdAt).format('MMMM Do YYYY')}
-                            </td>
-                            <td className="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">
-                              {moment(item.updatedAt).format('MMMM Do YYYY')}
+                              {item.status}
                             </td>
                             <td>
                               <button onClick={() => handleEdit(item.id)}>
@@ -153,9 +113,6 @@ const List = () => {
                                   className={`flex-none`}
                                   w="w-12"
                                 />
-                              </button>
-                              <button onClick={() => handleDelete(item.id)}>
-                                <BaseIcon path={mdiDelete} className={`flex-none`} w="w-12" />
                               </button>
                             </td>
                           </tr>
